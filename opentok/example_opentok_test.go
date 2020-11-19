@@ -1,13 +1,21 @@
 package opentok_test
 
-import "github.com/calvertyang/opentok-go-sdk/v2/opentok"
+import (
+	"net/http"
+	"time"
+
+	"github.com/anschwa/opentok-go-sdk/v2/opentok"
+)
 
 const (
 	apiKey    = "<your api key here>"
 	apiSecret = "<your api secret here>"
 )
 
-var ot = opentok.New(apiKey, apiSecret)
+var (
+	ot     = opentok.New(apiKey, apiSecret, http.DefaultClient)
+	client = &http.Client{Timeout: 120 * time.Second}
+)
 
 func ExampleNew() {
 	const (
@@ -15,5 +23,5 @@ func ExampleNew() {
 		apiSecret = "ba7816bf8f01cfea414140de5dae2223b00361a3"
 	)
 
-	opentok.New(apiKey, apiSecret)
+	opentok.New(apiKey, apiSecret, client)
 }

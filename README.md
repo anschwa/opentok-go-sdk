@@ -1,11 +1,5 @@
 # OpenTok Go SDK
 
-[![API Reference](https://godoc.org/github.com/calvertyang/opentok-go-sdk?status.svg)](https://pkg.go.dev/github.com/calvertyang/opentok-go-sdk/v2@v2.0.0/opentok)
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/calvertyang/opentok-go-sdk)](https://github.com/calvertyang/opentok-go-sdk/releases/latest)
-[![Build Status](https://travis-ci.org/calvertyang/opentok-go-sdk.svg?branch=master)](https://travis-ci.org/calvertyang/opentok-go-sdk)
-[![Go Report Card](https://goreportcard.com/badge/github.com/calvertyang/opentok-go-sdk)](https://goreportcard.com/report/github.com/calvertyang/opentok-go-sdk)
-[![license](https://img.shields.io/github/license/calvertyang/opentok-go-sdk.svg)](https://github.com/calvertyang/opentok-go-sdk/blob/master/LICENSE)
-
 The OpenTok Go SDK lets you generate
 [sessions](https://tokbox.com/developer/guides/create-session/) and
 [tokens](https://tokbox.com/developer/guides/create-token/) for
@@ -16,20 +10,18 @@ broadcasts](https://tokbox.com/developer/guides/broadcast/live-streaming/),
 working with OpenTok [SIP interconnect](https://tokbox.com/developer/guides/sip),
 and [disconnecting clients from sessions](https://tokbox.com/developer/guides/moderation/rest/).
 
-For usage and more information, please refer to [GoDoc](https://pkg.go.dev/github.com/calvertyang/opentok-go-sdk/v2@v2.0.0/opentok).
-
 ## Installing
 
 Use `go get` to retrieve the SDK to add it to your GOPATH workspace, or project's Go module dependencies.
 
 ```
-go get github.com/calvertyang/opentok-go-sdk
+go get github.com/anschwa/opentok-go-sdk
 ```
 
 To update the SDK use `go get -u` to retrieve the latest version of the SDK.
 
 ```
-go get -u github.com/calvertyang/opentok-go-sdk
+go get -u github.com/anschwa/opentok-go-sdk
 ```
 
 ## Usage
@@ -37,7 +29,7 @@ go get -u github.com/calvertyang/opentok-go-sdk
 ### Initializing
 
 ```go
-import "github.com/calvertyang/opentok-go-sdk/opentok"
+import "github.com/anschwa/opentok-go-sdk/opentok"
 
 ot := opentok.New(apiKey, apiSecret)
 ```
@@ -58,8 +50,7 @@ ot := opentok.New(apiKey, apiSecret)
 
 To create an OpenTok Session, use the `OpenTok.CreateSession(options)` method. The `options` parameter is an struct used to specify the following:
 
-* Whether the session uses the [OpenTok Media
-  Router](https://tokbox.com/developer/guides/create-session/#media-mode),
+* Whether the session uses the [OpenTok Media Router](https://tokbox.com/developer/guides/create-session/#media-mode),
   which is required for some OpenTok features (such as archiving)
 
 * A location hint for the OpenTok server.
@@ -73,18 +64,18 @@ session, err := ot.CreateSession(&opentok.SessionOptions{})
 
 // The session will the OpenTok Media Router:
 session, err := ot.CreateSession(&opentok.SessionOptions{
-	MediaMode: opentok.Routed,
+    MediaMode: opentok.Routed,
 })
 
 // A Session with a location hint
 session, err := ot.CreateSession(&opentok.SessionOptions{
-	Location: "12.34.56.78",
+    Location: "12.34.56.78",
 })
 
 // A Session with an automatic archiving
 session, err := ot.CreateSession(&opentok.SessionOptions{
-	ArchiveMode: opentok.AutoArchived,
-	MediaMode:   opentok.Routed,
+    ArchiveMode: opentok.AutoArchived,
+    MediaMode:   opentok.Routed,
 })
 ```
 
@@ -102,10 +93,10 @@ token, err := session.GenerateToken(&opentok.TokenOptions{})
 
 // Set some options in a Token
 token, err := session.GenerateToken(&opentok.TokenOptions{
-	Role:                   opentok.Moderator,
-	ExpireTime:             time.Now().UTC().Add(7 * 24 * time.Hour).Unix(), // in one week
-	Data:                   "name=Johnny",
-	InitialLayoutClassList: []string{"focus"},
+    Role:                   opentok.Moderator,
+    ExpireTime:             time.Now().UTC().Add(7 * 24 * time.Hour).Unix(), // in one week
+    Data:                   "name=Johnny",
+    InitialLayoutClassList: []string{"focus"},
 })
 ```
 
@@ -115,8 +106,8 @@ You can send a signal to all participants in an OpenTok Session by calling the `
 
 ```go
 err := ot.SendSessionSignal(sessionID, &opentok.SignalData{
-	Type: "foo",
-	Data: "bar",
+    Type: "foo",
+    Data: "bar",
 })
 ```
 
@@ -124,8 +115,8 @@ Or send a signal to a specific participant in the session by calling the `OpenTo
 
 ```go
 err := ot.SendConnectionSignal(sessionID, connectionID, &opentok.SignalData{
-	Type: "foo",
-	Data: "bar",
+    Type: "foo",
+    Data: "bar",
 })
 ```
 
@@ -171,7 +162,7 @@ archive, err := ot.StartArchive(sessionID, &opentok.ArchiveOptions{})
 
 // Start a named Archive
 archive, err := ot.StartArchive(sessionID, &opentok.ArchiveOptions{
-	Name: "Important Presentation",
+    Name: "Important Presentation",
 })
 ```
 
@@ -180,8 +171,8 @@ You can also disable audio or video recording by setting the `HasAudio` or `HasV
 ```go
 // Start an audio-only Archive
 archive, err := ot.StartArchive(sessionID, &opentok.ArchiveOptions{
-	Name:     "Important Presentation",
-	HasVideo: false,
+    Name:     "Important Presentation",
+    HasVideo: false,
 })
 ```
 
@@ -190,8 +181,8 @@ By default, all streams are recorded to a single (composed) file. You can record
 ```go
 // Start an Archive with individual output mode
 archive, err := ot.StartArchive(sessionID, &opentok.ArchiveOptions{
-	Name:       "Important Presentation",
-	OutputMode: opentok.Individual,
+    Name:       "Important Presentation",
+    OutputMode: opentok.Individual,
 })
 ```
 
@@ -200,8 +191,8 @@ For composed archives you can set the resolution of the archive, either SD ("640
 ```go
 // Start an Archive with HD resolution
 archive, err := ot.StartArchive(sessionID, &opentok.ArchiveOptions{
-	Name:       "Important Presentation",
-	Resolution: opentok.HD,
+    Name:       "Important Presentation",
+    Resolution: opentok.HD,
 })
 ```
 
@@ -237,13 +228,13 @@ You can also get a list of all the Archives you've created (up to 1000) with you
 ```go
 // Paginate through the results via offset by 100 and count by 50
 archives, err := ot.ListArchives(&opentok.ArchiveListOptions{
-	Offset: 100,
-	Count:  50,
+    Offset: 100,
+    Count:  50,
 })
 
 // List archives for a specific session ID
 archives, err := ot.ListArchives(&opentok.ArchiveListOptions{
-	SessionID: "2_MX4xMDB-flR1-QxNzIxNX4",
+    SessionID: "2_MX4xMDB-flR1-QxNzIxNX4",
 })
 ```
 
@@ -255,35 +246,35 @@ For an OpenTok project, you can have OpenTok upload completed archives to an Ama
 // Set an archive upload target to Amazon S3 and prevents archive files from
 // being stored in the OpenTok cloud if the upload fails.
 result, err := ot.SetArchiveStorage(&opentok.StorageOptions{
-	Type: "s3",
-	Config: opentok.AmazonS3Config{
-		AccessKey: "myUsername",
-		SecretKey: "myPassword",
-		Bucket:    "bucketName",
-	},
-	Fallback: "none",
+    Type: "s3",
+    Config: opentok.AmazonS3Config{
+        AccessKey: "myUsername",
+        SecretKey: "myPassword",
+        Bucket:    "bucketName",
+    },
+    Fallback: "none",
 })
 
 // Set an archive upload target to an S3-compliant storage provider
 result, err := ot.SetArchiveStorage(&opentok.StorageOptions{
-	Type: "s3",
-	Config: opentok.AmazonS3Config{
-		AccessKey: "myUsername",
-		SecretKey: "myPassword",
-		Bucket:    "bucketName",
-		Endpoint:  "s3.example.com"
-	},
+    Type: "s3",
+    Config: opentok.AmazonS3Config{
+        AccessKey: "myUsername",
+        SecretKey: "myPassword",
+        Bucket:    "bucketName",
+        Endpoint:  "s3.example.com"
+    },
 })
 
 // Set an archive upload target to Microsoft Azure
 result, err := ot.SetArchiveStorage(&opentok.StorageOptions{
-	Type: "azure",
-	Config: opentok.AzureConfig{
-		AccountName: "myAccountname",
-		AccountKey:  "myAccountKey",
-		Container:   "containerName",
-		Domain:      "domainName" // optional
-	},
+    Type: "azure",
+    Config: opentok.AzureConfig{
+        AccountName: "myAccountname",
+        AccountKey:  "myAccountKey",
+        Container:   "containerName",
+        Domain:      "domainName" // optional
+    },
 })
 ```
 
@@ -298,7 +289,7 @@ For composed archives, you can change the layout dynamically, using the `OpenTok
 
 ```go
 archive, err := ot.SetArchiveLayout(archiveID, &opentok.Layout{
-	Type: opentok.PIP,
+    Type: opentok.PIP,
 })
 ```
 
@@ -310,18 +301,18 @@ You can add an audio-only stream from an external third-party SIP gateway using 
 
 ```go
 sipCall, err := ot.Dial(sessionID, &opentok.DialOptions{
-	SIP: &opentok.SIP{
-		URI: "sip:user@sip.partner.com;transport=tls",
-		From: "from@example.com",
-		Headers: &opentok.SIPHeaders{
-			"headerKey": "headerValue",
-		},
-		Auth: &opentok.SIPAuth{
-			Username: "username",
-			Password: "password",
-		},
-		Secure: true,
-	},
+    SIP: &opentok.SIP{
+        URI: "sip:user@sip.partner.com;transport=tls",
+        From: "from@example.com",
+        Headers: &opentok.SIPHeaders{
+            "headerKey": "headerValue",
+        },
+        Auth: &opentok.SIPAuth{
+            Username: "username",
+            Password: "password",
+        },
+        Secure: true,
+    },
 })
 ```
 
@@ -335,26 +326,26 @@ To start a [live streaming broadcast](https://tokbox.com/developer/guides/broadc
 
 ```go
 broadcast, err := ot.StartBroadcast(sessionID, &opentok.BroadcastOptions{
-	Layout: &opentok.Layout{
-		Type: opentok.VerticalPresentation,
-	},
-	MaxDuration: 5400,
-	Outputs: &opentok.BroadcastOutputOptions{
-		HLS:  &opentok.HLSConfig{},
-		RTMP: []*opentok.RTMPConfig{
-			&opentok.RTMPConfig{
-				ID:         "foo",
-				ServerURL:  "rtmps://myfooserver/myfooapp",
-				StreamName: "myfoostream",
-			},
-			&opentok.RTMPConfig{
-				ID:         "bar",
-				ServerURL:  "rtmp://mybarserver/mybarapp",
-				StreamName: "mybarstream",
-			},
-		},
-	},
-	Resolution: opentok.HD,
+    Layout: &opentok.Layout{
+        Type: opentok.VerticalPresentation,
+    },
+    MaxDuration: 5400,
+    Outputs: &opentok.BroadcastOutputOptions{
+        HLS:  &opentok.HLSConfig{},
+        RTMP: []*opentok.RTMPConfig{
+            &opentok.RTMPConfig{
+                ID:         "foo",
+                ServerURL:  "rtmps://myfooserver/myfooapp",
+                StreamName: "myfoostream",
+            },
+            &opentok.RTMPConfig{
+                ID:         "bar",
+                ServerURL:  "rtmp://mybarserver/mybarapp",
+                StreamName: "mybarstream",
+            },
+        },
+    },
+    Resolution: opentok.HD,
 })
 ```
 
@@ -383,13 +374,13 @@ You can also get a list of all the Broadcasts you've created (up to 1000) with y
 ```go
 // Paginate through the results via offset by 100 and count by 50
 broadcasts, err := ot.ListBroadcasts(&opentok.BroadcastListOptions{
-	Offset: 100,
-	Count:  50,
+    Offset: 100,
+    Count:  50,
 })
 
 // List broadcasts for a specific session ID
 broadcasts, err := ot.ListBroadcasts(&opentok.BroadcastListOptions{
-	SessionID: "2_MX4xMDB-flR1-QxNzIxNX4",
+    SessionID: "2_MX4xMDB-flR1-QxNzIxNX4",
 })
 ```
 
@@ -397,7 +388,7 @@ To change the broadcast layout, call the `OpenTok.SetBroadcastLayout(broadcastID
 
 ```go
 broadcast, err := ot.SetBroadcastLayout(broadcastID, &opentok.Layout{
-	Type: opentok.PIP,
+    Type: opentok.PIP,
 })
 ```
 
@@ -405,12 +396,12 @@ You can set the initial layout class for a client's streams by setting the layou
 
 ```go
 streams, err := ot.SetStreamClassLists(sessionID, &opentok.StreamClassOptions{
-	Items: []*opentok.StreamClass{
-		&opentok.StreamClass{
-			ID: "8b732909-0a06-46a2-8ea8-074e64d43422",
-			LayoutClassList: []string{"full"},
-		},
-	},
+    Items: []*opentok.StreamClass{
+        &opentok.StreamClass{
+            ID: "8b732909-0a06-46a2-8ea8-074e64d43422",
+            LayoutClassList: []string{"full"},
+        },
+    },
 })
 ```
 
@@ -491,5 +482,5 @@ The OpenTok Go SDK requires Go 1.12 or higher. It may work on older versions but
 
 ## Release Notes
 
-See the [Releases](https://github.com/calvertyang/opentok-go-sdk/releases) page for details
+See the [Releases](https://github.com/anschwa/opentok-go-sdk/releases) page for details
 about each release.
