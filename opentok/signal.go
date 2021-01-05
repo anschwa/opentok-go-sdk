@@ -5,8 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 )
+
+const maxErrBodyBytes = 256
 
 // SignalData defines the type and data of signal
 type SignalData struct {
@@ -16,6 +19,19 @@ type SignalData struct {
 
 	// The data of the signal
 	Data string `json:"data"`
+}
+
+type SignalDataError struct {
+	Code    int
+	Message string
+}
+
+func (e *SignalDataError) Error() string {
+	return fmt.Sprintf("Tokbox error: code: %d; message: %s", e.Code, e.Message)
+}
+
+func newSignalDataError(code int, msg string) *SignalDataError {
+	return &SignalDataError{Code: code, Message: msg}
 }
 
 // SendSessionSignal send signals to all participants in an active OpenTok session.
@@ -54,7 +70,15 @@ func (ot *OpenTok) SendSessionSignalContext(ctx context.Context, sessionID strin
 	defer res.Body.Close()
 
 	if res.StatusCode != 204 {
-		return fmt.Errorf("Tokbox returns error code: %v", res.StatusCode)
+		data := struct {
+			Message string `json:"message"`
+		}{}
+
+		if err := json.NewDecoder(io.LimitReader(res.Body, maxErrBodyBytes)).Decode(&data); err != nil {
+			return fmt.Errorf("Error decoding response from Tokbox: statusCode: %d; %w", res.StatusCode, err)
+		}
+
+		return newSignalDataError(res.StatusCode, data.Message)
 	}
 
 	return nil
@@ -100,7 +124,15 @@ func (ot *OpenTok) SendConnectionSignalContext(ctx context.Context, sessionID, c
 	defer res.Body.Close()
 
 	if res.StatusCode != 204 {
-		return fmt.Errorf("Tokbox returns error code: %v", res.StatusCode)
+		data := struct {
+			Message string `json:"message"`
+		}{}
+
+		if err := json.NewDecoder(io.LimitReader(res.Body, maxErrBodyBytes)).Decode(&data); err != nil {
+			return fmt.Errorf("Error decoding response from Tokbox: statusCode: %d; %w", res.StatusCode, err)
+		}
+
+		return newSignalDataError(res.StatusCode, data.Message)
 	}
 
 	return nil
